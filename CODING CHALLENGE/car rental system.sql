@@ -170,8 +170,8 @@ select lease.leaseID,vehicle.make,vehicle.model,Vehicle.year,Vehicle.dailyRate,V
 from lease join vehicle on lease.vehicleID = Vehicle.vehicleID;
 
 -- 16.	Retrieve Details of Active Leases with Customer and Car Information. 
-SELECT lease.leaseID,customer.email,customer.phoneNumber,vehicle.make,vehicle.model,vehicle.year,vehicle.dailyRate,vehicle.status,
-vehicle.passengerCapacity,vehicle.engineCapacity,lease.startDate,lease.endDate,lease.type from lease
+SELECT lease.leaseID,customer.email,vehicle.make,vehicle.model,vehicle.year,
+vehicle.dailyRate,vehicle.status,lease.endDate,lease.type from lease
 join customer on Lease.customerID = Customer.customerID
 join vehicle on Lease.vehicleID = vehicle.vehicleID
 where lease.endDate >= current_date();
