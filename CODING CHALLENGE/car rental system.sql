@@ -116,10 +116,11 @@ delete from Customer where customerID = 9;
 alter table Payment rename COLUMN paymentDate to transactionDate;
 
 -- 4. Find a specific customer by email.
-select * from Customer where customerID = 2;
+select * from Customer where email='william@example.com';
 
 -- 5. Get active leases for a specific customer.
 select * from Lease where customerID <9 and enddate >= current_date;
+select * from Lease where endDate >= current_date() or endDate is null;
 
 -- 6. Find all payments made by a customer with a specific phone number.
 select Payment.* from Payment
@@ -192,4 +193,5 @@ limit 1;
 -- 18.	List All Cars with Their Current Lease Information. 
 select * FROM vehicle;
 select * from Lease where endDate >= CURDATE() or endDate is null;
+
 
