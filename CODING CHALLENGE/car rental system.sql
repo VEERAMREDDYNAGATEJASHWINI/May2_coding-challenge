@@ -30,17 +30,6 @@ foreign key (vehicleID) references Vehicle(vehicleID),
 foreign key (customerID) references Customer(customerID)
 );
 
-create table Lease (
-leaseID INT PRIMARY KEY,
-vehicleID INT,
-customerID INT,
-startDate DATE,
-endDate DATE,
-type ENUM('DailyLease', 'MonthlyLease'),
-foreign key (vehicleID) references Vehicle(vehicleID),
-foreign key (customerID) references Customer(customerID)
-);
-
 create table Payment (
 paymentID INT primary key,
 leaseID INT,
@@ -119,8 +108,8 @@ alter table Payment rename COLUMN paymentDate to transactionDate;
 select * from Customer where email='william@example.com';
 
 -- 5. Get active leases for a specific customer.
+select * from Lease where customerID=3 and endDate>=GETDATE();
 select * from Lease where customerID <9 and enddate >= current_date;
-select * from Lease where endDate >= current_date() or endDate is null;
 
 -- 6. Find all payments made by a customer with a specific phone number.
 select Payment.* from Payment
@@ -148,10 +137,14 @@ select * from  Lease where endDate = (select max(enddate) from Lease);
 select transactiondate as payments_made from Payment where transactiondate >= '2023-01-01' and transactiondate < '2024-01-01';
 select * from payment;
 
+select *from payment where year(paymentDate)= 2023;
+
 -- 12.	Retrieve customers who have not made any payments. 
 select * from customer where customerID not in ( select distinct customer.customerID from customer
 inner join Lease on customer.customerID = Lease.customerID
 inner join Payment on Lease.leaseID = Payment.leaseID);
+
+select *from customer where customerId not in (select customerId from lease);
 
 -- 13.	Retrieve Car Details and Their Total Payments. 
 select vehicle.make,COALESCE(SUM(Payment.amount), 0) as total_payments from vehicle
@@ -164,11 +157,11 @@ left join Payment on Lease.leaseID = Payment.leaseID group by vehicle.make;
 
 -- 14.	Calculate Total Payments for Each Customer. 
 select c.customerID,( select SUM(P.amount) from Lease 
-join Payment AS P ON Lease.leaseID = P.leaseID where Lease.customerID = C.customerID) as total_payments from customer AS C;
+join Payment AS P ON Lease.leaseID = P.leaseID where Lease.customerID = C.customerID) as total_payments 
+from customer AS C;
 
 -- 15.	List Car Details for Each Lease. 
-select lease.leaseID,vehicle.make,vehicle.model,Vehicle.year,Vehicle.dailyRate,Vehicle.status,Vehicle.passengerCapacity,Vehicle.engineCapacity
-from lease join vehicle on lease.vehicleID = Vehicle.vehicleID;
+select l.*, v.make,v.model from lease linner join vehicle v on l.vehicleID=v.vehicleID;
 
 -- 16.	Retrieve Details of Active Leases with Customer and Car Information. 
 SELECT lease.leaseID,customer.email,vehicle.make,vehicle.model,vehicle.year,
@@ -192,6 +185,7 @@ limit 1;
 
 -- 18.	List All Cars with Their Current Lease Information. 
 select * FROM vehicle;
-select * from Lease where endDate >= CURDATE() or endDate is null;
+select * from lease l
+inner join vehicle v on v.vehicleID= l.vehicleID; 
 
 
